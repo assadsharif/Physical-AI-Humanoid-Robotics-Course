@@ -45,8 +45,9 @@ env/
 htmlcov/
 .tox/
 
-# Alembic
-versions/
+# Alembic - track migrations but not auto-generated versions
+# migrations/versions/ should be committed
+# migrations/versions/__pycache__/ should be ignored
 
 # Logs
 *.log
