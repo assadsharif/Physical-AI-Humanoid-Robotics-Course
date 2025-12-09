@@ -1,0 +1,94 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main, develop, 006-phase1-implementation]
+    paths:
+      - 'backend/**'
+      - 'web/**'
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - '.github/workflows/build.yml'
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: false
+          tags: robotics-platform:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          outputs: type=docker,dest=/tmp/image.tar
+
+      - name: Load image and test
+        run: |
+          docker load --input /tmp/image.tar
+          docker run --rm robotics-platform:latest python -c "import fastapi; print(f'FastAPI {fastapi.__version__} OK')"
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'web/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+
+      - name: Build
+        working-directory: web
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-build
+          path: web/build/
+          retention-days: 7
+
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run backend security scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: 'backend'
+          format: 'sarif'
+          output: 'backend-security.sarif'
+        continue-on-error: true
+
+      - name: Run frontend security scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: 'web'
+          format: 'sarif'
+          output: 'frontend-security.sarif'
+        continue-on-error: true
+
+      - name: Upload security results
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'backend-security.sarif'
+        continue-on-error: true
