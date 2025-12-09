@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Build
+/build
+/dist
+/.docusaurus
+.docusaurus/
+
+# Testing
+/coverage
+
+# Misc
+.DS_Store
+.env.local
+.env.*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# IDE
+.code-workspace
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
