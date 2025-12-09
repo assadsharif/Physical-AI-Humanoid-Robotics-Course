@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: robotics_postgres
+    environment:
+      POSTGRES_USER: robotics_user
+      POSTGRES_PASSWORD: robotics_password
+      POSTGRES_DB: robotics_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U robotics_user -d robotics_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Qdrant Vector Store
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: robotics_qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    environment:
+      QDRANT__API_KEY: qdrant-api-key-dev
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: robotics_backend
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/src:/app/src
+    environment:
+      DATABASE_URL: postgresql+asyncpg://robotics_user:robotics_password@postgres:5432/robotics_db
+      QDRANT_URL: http://qdrant:6333
+      QDRANT_API_KEY: qdrant-api-key-dev
+      ENVIRONMENT: development
+      DEBUG: "true"
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-sk-test}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  qdrant_data:
+
+networks:
+  default:
+    name: robotics_network
