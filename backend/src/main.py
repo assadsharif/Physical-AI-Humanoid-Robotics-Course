@@ -16,6 +16,7 @@ from typing import Callable
 from config import settings
 from middleware.error_handler import error_exception_handler
 from middleware.request_logging import RequestLoggingMiddleware
+from middleware.auth_middleware import jwt_auth_middleware
 from utils.logger import setup_logging
 from api import health, auth, chat
 
