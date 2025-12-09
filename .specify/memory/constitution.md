@@ -1,55 +1,181 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# Physical AI & Humanoid Robotics Course Constitution
+
+<!-- Sync Impact Report (2025-12-09)
+Version bump: 1.0.0 (NEW)
+Added principles: Spec-Driven Development, Technical Excellence, Safety-First, Pedagogical Rigor, AI Integration Discipline
+Added sections: Content Standards, Technical Rules, Book Architecture, Coding Standards, Quality & Safety Guardrails, Assessment Structure
+Added governance: Spec-driven workflow, version control mandate, compliance review via /sp.* commands
+Templates requiring updates: plan-template.md (✅ align), spec-template.md (✅ align), tasks-template.md (✅ align)
+-->
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Spec-Driven Development (SDD)
+Every feature, chapter, and component must be produced using the formal workflow: `/sp.specify` → `/sp.plan` → `/sp.tasks` → `/sp.implement`. No vibe-coding, ad-hoc changes, or untracked modifications allowed. Each artifact (spec, plan, tasks) must be version-controlled and traceable to a PHR (Prompt History Record).
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Technical Excellence
+All code must adhere to strict language and framework standards: Python for backend/robotics, JavaScript/TypeScript for Docusaurus only. Pydantic models mandatory, async FastAPI endpoints required, typing enforced everywhere. ROS 2 code must compile on Humble or Iron with PEER naming conventions and diagnostics publishing. No technical debt accepted without explicit SDD-tracked decision.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Safety-First (NON-NEGOTIABLE)
+No robotics instruction may cause physical collisions or unsafe behaviors. All dangerous workflows must be simulation-only with explicit hazard warnings. All LLM outputs feeding robot control must pass safety validators and map to valid ROS 2 actions/topics/services. Uncontrolled LLM-to-robot direct control is prohibited.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Pedagogical Rigor
+Each module must include: concept explanation, real-world example, Python code sample, robotics system diagram, exercises, quiz, mini project, and advanced hands-on project. Content must be academically correct, technically precise, and free of marketing hype. Consistent terminology required: "Physical AI," "Embodied Intelligence," "Digital Twin," "Humanoid Control Stack," "Vision-Language-Action," "Sim-to-Real Transfer."
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. AI Integration Discipline
+LLMs (GPT, Claude) used only for cognitive planning, natural language → robotics action graphs, and voice instruction parsing. No hallucinated robotics APIs. Every AI-generated robotics command must map to valid ROS 2 constructs. Voice parsing via Whisper only. Action planning must produce executable ROS 2 sequences, not ambiguous pseudo-code.
 
-### [PRINCIPLE_6_NAME]
+### VI. Versioning & Reproducibility
+All content version-controlled in Git. Each feature uses semantic versioning: MAJOR (backward-incompatible content/API changes), MINOR (new chapters/sections), PATCH (clarifications/corrections). Constitution and templates versioned separately. Constitution amendments require ratification and PHR tracking.
 
+## Content Standards
 
-[PRINCIPLE__DESCRIPTION]
+### Writing Style
+- Clear, technical, academically correct language
+- Prioritize engineering precision; avoid marketing hype
+- Use diagrams, tables, and code examples throughout
+- All code examples in Python + ROS 2 (rclpy)
+- Consistent terminology enforced per core principles
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### Robotics Stack Requirements
+- All robotics code examples must use Python
+- ROS 2 examples must include: nodes, topics, services, launch files, URDF parsing
+- Simulation content uses: Gazebo (SDF/URDF), optionally Unity, and NVIDIA Isaac Sim
+- Vision-Language-Action (VLA) integration: Whisper (voice) + LLM (planner) + ROS 2 (executor)
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### AI Model Integration
+- GPT/LLMs used ONLY for: cognitive planning, natural language → action graphs, voice instruction parsing
+- No hallucinated robotics APIs
+- Every robotics command MUST map to valid ROS 2 actions, topics, or services
+- Safety validators mandatory between LLM output and robot execution
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Book Architecture
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### Docusaurus Structure
+- Autogenerated sidebar from module metadata
+- Clean module hierarchy
+- Chapters strictly nested under module folders
+- File structure:
+
+```
+docs/
+  01-intro/           # Physical AI foundations
+  02-ros2/            # ROS 2 fundamentals & practical
+  03-gazebo/          # Simulation with Gazebo
+  04-isaac/           # NVIDIA Isaac Sim & advanced sim
+  05-vla/             # Vision-Language-Action systems
+  06-capstone/        # Capstone project & integration
+```
+
+### RAG (Retrieval-Augmented Generation) Backend
+- FastAPI backend only (no direct LLM integration in frontend)
+- Qdrant Cloud for vector storage (embeddings)
+- Neon Postgres for metadata and audit trails
+- Supported RAG features:
+  - Global chat across all content
+  - Highlight-to-answer (context-aware Q&A)
+  - Chapter-specific context window
+
+## Coding Standards
+
+### Language Policy
+- **Backend & Robotics**: Python only
+- **Frontend & UI**: JavaScript/TypeScript only (Docusaurus widgets)
+- **Database**: Postgres (via Neon)
+
+### Python Code Standards
+- Pydantic models mandatory for all data structures
+- Async FastAPI endpoints only (no blocking calls)
+- Full type annotations required (`typing` module)
+- One responsibility per module (single-concern principle)
+- Code examples must compile and pass linting (ruff, mypy)
+
+### ROS 2 Code Standards
+- Must compile on ROS 2 Humble or Iron
+- PEER naming conventions (Publishers, subscriptions, Events, RPC services)
+- Proper node lifecycle logic (on_configure, on_activate, on_deactivate, on_cleanup)
+- Diagnostics publishing required for all critical nodes
+- Launch files must use modern declarative syntax
+
+### VLA Code Standards
+- LLM planning must produce structured action graphs (JSON-serializable)
+- Action graphs MUST translate to executable ROS 2 sequences
+- All model outputs filtered through safety validators before robot execution
+- Voice inputs parsed via Whisper only; outputs validated against robot capability set
+
+## Quality & Safety Guardrails
+
+### Robotics Safety (NON-NEGOTIABLE)
+- Never generate instructions that cause physical collisions or unsafe arm/leg motions
+- All dangerous workflows (high-force control, unstable gaits) simulation-only with explicit warnings
+- Sim-to-real transfer guidance must include safety validation steps
+- Hazardous workflows clearly marked in documentation
+
+### AI Safety (NON-NEGOTIABLE)
+- No uncontrolled LLM → robot direct control
+- All LLM outputs must be:
+  - Validated against robot action vocabulary
+  - Checked for feasibility (kinematics, joint limits)
+  - Filtered through ROS 2 action/service constraints
+  - Logged for audit and replay
+- Confidence scores from LLM must exceed threshold before execution
+
+## Assessment Structure
+
+### Per-Module Requirements
+Each module must include:
+- Practical exercise (hands-on with code)
+- Quiz (conceptual understanding)
+- Hands-on robotics challenge (Gazebo/Isaac sim)
+- Programming assignment (Python + ROS 2)
+- Advanced real-world project (open-ended design)
+
+### Capstone Project
+- Simulated humanoid robot (Gazebo/Isaac)
+- Receives voice command via Whisper
+- Plans path and actions via LLM planner
+- Navigates obstacles in simulation
+- Identifies target object via vision
+- Manipulates object via ROS 2 actions
+- Demonstrates full VLA stack integration
+
+## Collaboration & Versioning
+
+### Mandatory Workflow
+All content and code must follow Spec-Driven Development:
+1. `/sp.specify` - Define requirements & scope
+2. `/sp.plan` - Architect design & decisions (ADR if significant)
+3. `/sp.tasks` - Break into actionable, testable tasks
+4. `/sp.implement` - Execute tasks with PHR tracking
+
+No direct vibe-coding or ad-hoc changes allowed. All PRs must reference spec/plan/tasks artifacts.
+
+### Version Control
+- All content version-controlled in Git (main branch source of truth)
+- Each feature branch tied to spec/plan/tasks
+- PHRs created for every significant prompt/completion cycle
+- ADRs (Architecture Decision Records) created for significant technical decisions
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+### Constitution Authority
+This constitution supersedes all other project practices and guidelines. It defines non-negotiable requirements for content quality, safety, and technical rigor.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+### Amendment Process
+1. Amendments require explicit user input via `/sp.constitution` command
+2. Version number must increment (semantic versioning)
+3. Ratification date and last-amended date updated
+4. Sync Impact Report prepended (lists affected templates and artifacts)
+5. All dependent templates (plan, spec, tasks) reviewed for alignment within 24 hours
+6. Amendment must be committed with message: `docs: amend constitution to v<VERSION> (<rationale>)`
+
+### Compliance Review
+- All PRs must verify compliance with applicable principles (Spec-Driven Development, Safety-First, Technical Excellence)
+- Complexity (multi-file changes, new patterns) must be justified in spec/plan
+- Use `/sp.implement` command to track task execution and validate against plan
+- Use `/sp.phr` to record significant prompts and decisions (PHRs stored under `history/prompts/`)
+
+### Runtime Guidance
+Development team should reference CLAUDE.md for daily decision-making and Claude Code tool usage. Constitution defines the "what" (requirements); CLAUDE.md defines the "how" (execution patterns).
+
+**Version**: 1.0.0 | **Ratified**: 2025-12-09 | **Last Amended**: 2025-12-09
