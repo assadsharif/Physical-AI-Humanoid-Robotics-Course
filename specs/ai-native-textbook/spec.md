@@ -81,7 +81,7 @@ A student reaches the capstone module. The student receives a voice prompt: "Pic
 
 The student submits video proof of execution. System validates against success criteria.
 
-**Why this priority**: Capstone is showcase feature (90-second hackathon video); demonstrates full stack integration.
+**Why this priority**: Capstone is showcase feature; demonstrates full stack integration of all 4 modules (ROS 2, Digital Twin, Isaac, VLA).
 
 **Independent Test**: Can be fully tested by: (1) Voice input → action planning → ROS 2 execution in Gazebo, (2) Video validation, (3) Project submission. Delivers: Complete VLA + sim integration.
 
@@ -241,10 +241,9 @@ The student submits video proof of execution. System validates against success c
 - [ ] Capstone project runnable end-to-end (voice → planning → ROS 2 execution in Gazebo)
 - [ ] All code examples compile and run without errors
 - [ ] Deployed on GitHub Pages/Vercel (frontend) and Render/Railway (backend)
-- [ ] README with setup instructions and demo video link
+- [ ] README with setup instructions
 - [ ] FastAPI backend deployed and responding < 3sec on all endpoints
 - [ ] Neon Postgres and Qdrant Cloud instances running and accessible
-- [ ] 90-second hackathon demo ready (recorded or live)
 
 ## Next Steps
 
